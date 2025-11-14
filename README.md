@@ -18,3 +18,6 @@ Selecciona una opción:
 Opción: 
 
 Pero solo camnbia de medio a high, no da una shell como nt authority/system
+
+
+-> La versión 2.0 tiene la opción de ejecutar un comando como nt authority/system
